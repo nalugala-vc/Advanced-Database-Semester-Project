@@ -3,7 +3,7 @@ import mysql.connector
 
 
 class LoadingClass:
-    def load_data_one(self, tranformed_data, connection):
+    def load_data_one(self, transformed_data, connection):
         cursor = connection.cursor()
         # explain what a connection cursor is
 
@@ -18,7 +18,7 @@ class LoadingClass:
         cursor.execute(create_country_table)
 
         # formatting
-        country_data = tranformed_data[['country', 'ISO']].copy()
+        country_data = transformed_data[['country', 'ISO']].copy()
 
         #removing duplicates
         country_data['country'] = country_data['country'].str.lower().str.strip()
@@ -46,7 +46,7 @@ class LoadingClass:
             )  
         '''
         cursor.execute(create_sector_table)
-        sector_data = tranformed_data[['sector']].copy()
+        sector_data = transformed_data[['sector']].copy()
         sector_data = sector_data.drop_duplicates()
         sector_records = sector_data.values.tolist()
 
@@ -64,7 +64,7 @@ class LoadingClass:
                     ) 
                 '''
         cursor.execute(create_loan_theme_type_table)
-        loan_theme_data = tranformed_data[['Loan Theme Type']].copy()
+        loan_theme_data = transformed_data[['Loan Theme Type']].copy()
         loan_theme_data = loan_theme_data.drop_duplicates()
         loan_theme_records = loan_theme_data.values.tolist()
 
@@ -172,6 +172,24 @@ class LoadingClass:
         '''
 
         cursor.executemany(insert_date_table, date_records)
+
+        create_borrower_gender_tbl = '''
+                    CREATE TABLE IF NOT EXISTS borrower_gender_tbl(
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        borrower_gender LONGTEXT
+                    )
+        '''
+
+        cursor.execute(create_borrower_gender_tbl)
+
+        borrower_gender_data = transformed_data[['borrower_genders']].copy()
+        borrower_gender_data = borrower_gender_data.drop_duplicates()
+        borrower_gender_data = borrower_gender_data.dropna()
+        borrower_gender_records = borrower_gender_data.values.tolist()
+
+        insert_gender_table = '''INSERT INTO borrower_gender_tbl (borrower_gender) VALUES (%s) '''
+
+        cursor.executemany(insert_gender_table,borrower_gender_records)
 
         connection.commit()
         cursor.close()

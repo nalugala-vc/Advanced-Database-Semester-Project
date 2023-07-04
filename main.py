@@ -67,9 +67,8 @@ connection = mysql_connection()
 #qsn 3
 # The demographic trend of the fundraisers across different regions in relation to time of the year
 csv_file = '../kiva_loans.csv'
-required_columns = ['id','date','loan_amount','funded_amount','lender_count','country','region']
+required_columns = ['id','date','loan_amount','funded_amount','lender_count','country','region','borrower_genders']
 etl_pipeline = execute_etl_pipeline(csv_file,required_columns)
-
 
 
 print(etl_pipeline)

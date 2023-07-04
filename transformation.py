@@ -1,5 +1,4 @@
 import pandas as pd
-import mysql.connector
 
 
 class TransformationClass:
@@ -34,7 +33,7 @@ class TransformationClass:
         # creating approximate values for dibursment time
         null_distributed_time = transformed_df['disbursed_time'].isnull()
         transformed_df.loc[null_distributed_time, 'disbursed_time'] = pd.to_datetime(
-            transformed_df.loc[null_distributed_time, 'posted_time']) + median_time_diff
+            transformed_df.loc[null_distributed_time, 'posted_time']) - median_time_diff
 
         # sorting regions that were empty
         transformed_df['region'] = transformed_df['region'].fillna(transformed_df['country'])
@@ -54,5 +53,7 @@ class TransformationClass:
 
         transformed_df['region'] = transformed_df['region'].fillna(transformed_df['country'])
         transformed_df = transformed_df.rename(columns={'funded_amount': 'amount'})
+
+        #0.6% of the data had no borrower gender
 
         return transformed_df
